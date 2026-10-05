@@ -133,7 +133,6 @@ def compile(
         annotate=annotate,
         annotation_style=annotation_style,
         strip_extras=True,
-        generate_hashes=generate_hashes,
         default_index_url=repository.DEFAULT_INDEX_URL,
         index_urls=repository.finder.index_urls,
         trusted_hosts=repository.finder.trusted_hosts,

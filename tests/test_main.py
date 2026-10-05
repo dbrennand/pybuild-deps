@@ -13,6 +13,7 @@ from pybuild_deps import __main__ as main
 from pybuild_deps.compile_build_dependencies import BuildDependencyCompiler
 from pybuild_deps.constants import PIPTOOLS_CACHE_DIR
 from pybuild_deps.parsers import parse_requirements
+from pybuild_deps.scripts import compile as compile_mod
 
 
 @pytest.fixture
@@ -261,6 +262,37 @@ def test_compile_unsolvable_dependencies(runner: CliRunner, tmp_path: Path, mock
     )
     assert "setuptools>=42" in result.stderr
     assert "setuptools<42" in result.stderr
+
+
+def test_compile_does_not_pass_generate_hashes_to_output_writer(
+    runner: CliRunner, tmp_path: Path, mocker
+):
+    """Ensure generate_hashes is not passed to OutputWriter.__init__.
+
+    pip-tools 7.6.1 removed generate_hashes from OutputWriter.__init__,
+    moving hash handling entirely to OutputWriter.write().
+    """
+    chdir(tmp_path)
+    requirements_path = tmp_path / "requirements.txt"
+    requirements_path.write_text("setuptools==75.0.0")
+
+    mocker.patch.object(BuildDependencyCompiler, "resolve", return_value=set())
+
+    mock_writer = mocker.MagicMock()
+    mock_init = mocker.patch.object(
+        compile_mod.OutputWriter, "__init__", return_value=None
+    )
+    mocker.patch.object(compile_mod.OutputWriter, "write")
+
+    result = runner.invoke(
+        main.cli, args=["compile", "--generate-hashes", str(requirements_path)]
+    )
+    assert result.exit_code == 0, result.output
+    mock_init.assert_called_once()
+    kwargs = mock_init.call_args.kwargs
+    assert "generate_hashes" not in kwargs, (
+        "generate_hashes must not be passed to OutputWriter.__init__"
+    )
 
 
 @pytest.mark.e2e

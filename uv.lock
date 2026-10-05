@@ -891,7 +891,7 @@ requires-dist = [
     { name = "click", specifier = ">=8.0.1,<9" },
     { name = "gitpython" },
     { name = "packaging", specifier = ">=21.0" },
-    { name = "pip-tools", specifier = ">=7,<7.6.1" },
+    { name = "pip-tools", specifier = ">=7,<7.7" },
     { name = "requests", specifier = ">=2.32.3,<3" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "xdg", specifier = ">=6,<7" },
