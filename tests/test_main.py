@@ -278,7 +278,6 @@ def test_compile_does_not_pass_generate_hashes_to_output_writer(
 
     mocker.patch.object(BuildDependencyCompiler, "resolve", return_value=set())
 
-    mock_writer = mocker.MagicMock()
     mock_init = mocker.patch.object(
         compile_mod.OutputWriter, "__init__", return_value=None
     )
